@@ -2,26 +2,23 @@ package com.raizlabs.android.coreutils.events;
 
 import com.raizlabs.android.coreutils.functions.Delegate;
 
-import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 
 /**
- * Implementation of {@link ReferenceEvent} which uses soft references to its listeners.
+ * Implementation of {@link ReferenceEvent} which uses weak references to its listeners.
  *
  * @param <T> The parameter type of the event.
  */
-public class SoftRefEvent<T> extends ReferenceEvent<T, SoftRefEvent.SoftDelegateReference<T>> {
-
-    public SoftRefEvent() {
-    }
+public class WeakRefEvent<T> extends ReferenceEvent<T, WeakRefEvent.WeakDelegateReference<T>> {
 
     @Override
-    protected SoftDelegateReference<T> createReference(Delegate<T> listener) {
-        return new SoftDelegateReference<>(listener);
+    protected WeakDelegateReference<T> createReference(Delegate<T> listener) {
+        return new WeakDelegateReference<>(listener);
     }
 
-    static class SoftDelegateReference<T> extends SoftReference<Delegate<T>> {
+    static class WeakDelegateReference<T> extends WeakReference<Delegate<T>> {
 
-        public SoftDelegateReference(Delegate<T> r) {
+        public WeakDelegateReference(Delegate<T> r) {
             super(r);
         }
 
