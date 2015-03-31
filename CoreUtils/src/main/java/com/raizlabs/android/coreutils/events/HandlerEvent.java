@@ -15,41 +15,43 @@ import com.raizlabs.android.coreutils.threading.ThreadingUtils;
  */
 public class HandlerEvent<T> extends Event<T> {
 
-	private Handler handler;
-	
-	/**
-	 * Constructs a {@link HandlerEvent} which will be dispatched on the
-	 * current thread. Throws an exception if this thread is not a looper
-	 * thread.
-	 * @throws RuntimeException if called from a non-looper thread.
-	 */
-	public HandlerEvent() {
-		super();
-		Looper looper = Looper.myLooper();
-		if (looper != null) {
-			this.handler = new Handler(looper);
-		} else {
-			throw new RuntimeException("Can't create a default " + getClass().getSimpleName() + " constructor from a non-looper thread.");
-		}
-	}
-	
-	/**
-	 * Constructs a {@link HandlerEvent} which will be dispatched via the given
-	 * {@link Handler}.
-	 * @param handler The handler to dispatch the event on.
-	 */
-	public HandlerEvent(Handler handler) {
-		super();
-		this.handler = handler;
-	}
-	
-	@Override
-	protected void performRaiseEvent(final DelegateSet<T> listeners, final T params) { 
-		ThreadingUtils.runOnHandler(new Runnable() {
-			@Override
-			public void run() {
-				listeners.execute(params);
-			}
-		}, handler);
-	}
+    private Handler handler;
+
+    /**
+     * Constructs a {@link HandlerEvent} which will be dispatched on the
+     * current thread. Throws an exception if this thread is not a looper
+     * thread.
+     *
+     * @throws RuntimeException if called from a non-looper thread.
+     */
+    public HandlerEvent() {
+        super();
+        Looper looper = Looper.myLooper();
+        if (looper != null) {
+            this.handler = new Handler(looper);
+        } else {
+            throw new RuntimeException("Can't create a default " + getClass().getSimpleName() + " constructor from a non-looper thread.");
+        }
+    }
+
+    /**
+     * Constructs a {@link HandlerEvent} which will be dispatched via the given
+     * {@link Handler}.
+     *
+     * @param handler The handler to dispatch the event on.
+     */
+    public HandlerEvent(Handler handler) {
+        super();
+        this.handler = handler;
+    }
+
+    @Override
+    protected void performRaiseEvent(final DelegateSet<T> listeners, final T params) {
+        ThreadingUtils.runOnHandler(new Runnable() {
+            @Override
+            public void run() {
+                listeners.execute(params);
+            }
+        }, handler);
+    }
 }
