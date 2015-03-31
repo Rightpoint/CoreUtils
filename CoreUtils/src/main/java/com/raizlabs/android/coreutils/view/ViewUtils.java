@@ -83,6 +83,18 @@ public class ViewUtils {
 	public static void setVisibleOrGone(View view, boolean visible) {
 		view.setVisibility(visible ? View.VISIBLE : View.GONE);
 	}
+
+    /**
+     * Sets the given {@link View} visibility to {@link View#VISIBLE} or
+     * {@link View#GONE} depending on the specified value.
+     * @param visible True to make the view VISIBLE, false to make it GONE.
+     * @param views The list of views to change the visiblity of
+     */
+    public static void setViewsVisibleOrGone(boolean visible, View...views) {
+        for(View view: views) {
+            setVisibleOrGone(view, visible);
+        }
+    }
 	
 	/**
 	 * Sets the given {@link View}s visibility to {@link View#VISIBLE} or
@@ -93,6 +105,18 @@ public class ViewUtils {
 	public static void setVisibleOrInvisible(View view, boolean visible) {
 		view.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
 	}
+
+    /**
+     * Sets the given {@link View} visibility to {@link View#VISIBLE} or
+     * {@link View#INVISIBLE} depending on the specified value.
+     * @param visible True to make the view VISIBLE, false to make it INVISIBLE.
+     * @param views The list of views to change the visiblity of
+     */
+    public static void setViewsVisibleOrInvisible(boolean visible, View...views) {
+        for(View view: views) {
+            setVisibleOrGone(view, visible);
+        }
+    }
 	
 	/**
 	 * Returns true if the given {@link View}s visibility is set to

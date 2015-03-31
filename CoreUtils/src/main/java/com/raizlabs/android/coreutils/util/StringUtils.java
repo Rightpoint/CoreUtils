@@ -26,12 +26,32 @@ public class StringUtils {
 	}
 	
 	/**
-	 * Returns true if the given string is null, the empty string, or the
+	 * Returns true if any of the the given strings are null, the empty string, or the
 	 * string "null".
-	 * @param str The string to check.
-	 * @return True if the string is null or empty.
+	 * @param strs The list of strings to check.
+	 * @return True if any string is null or empty.
 	 */
-	public static boolean isNullOrEmpty(String str) {
-		return (str == null) || (str.equals("")) || (str.equals("null"));
+	public static boolean isNullOrEmpty(String...strs) {
+        for(String str: strs) {
+            if (str == null || str.equals("") || str.equals("null")) {
+                return true;
+            }
+        }
+        return false;
 	}
+
+    /**
+     * Returns true if all of the the given strings are not null, the empty string, or the
+     * string "null".
+     * @param strs The list of strings to check.
+     * @return True if all the strings are not null or empty.
+     */
+    public static boolean isNotNullOrEmpty(String...strs) {
+        for(String str: strs) {
+            if (str == null || str.equals("") || str.equals("null")) {
+                return false;
+            }
+        }
+        return false;
+    }
 }
