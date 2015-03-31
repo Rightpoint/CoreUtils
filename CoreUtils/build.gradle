@@ -11,3 +11,6 @@ android {
         versionName "1.0"
     }
 }
+
+apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/android_artifacts.gradle'
+apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/maven_push.gradle'
