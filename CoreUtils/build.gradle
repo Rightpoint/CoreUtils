@@ -17,5 +17,9 @@ android {
     }
 }
 
-apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/android_artifacts.gradle'
-apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/maven_push.gradle'
+dependencies {
+    compile 'com.android.support:support-annotations:22.2.0'
+}
+
+//apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/android_artifacts.gradle'
+//apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/maven_push.gradle'
