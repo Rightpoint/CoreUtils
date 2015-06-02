@@ -225,7 +225,7 @@ public class FilteredList<T> implements ObservableList<T> {
             // If the list is modified during this time, we've locked this
             // method, therefore the update will come through later and
             // fix this again
-            Collection<T> items = new ArrayList<T>(sourceList);
+            Collection<T> items = new ArrayList<>(sourceList);
             for (T item : items) {
                 if (filters.evaluate(item)) {
                     filteredList.add(item);
