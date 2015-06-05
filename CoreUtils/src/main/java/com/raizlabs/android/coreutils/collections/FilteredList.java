@@ -17,6 +17,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * A list that contains a live filter of a given list.  Does not support all list methods and will
+ * throw an {@link UnsupportedOperationException} if an unsupported method is called
+ * @param <T> type of item contained in this list
+ */
 public class FilteredList<T> implements ObservableList<T> {
 
     //region Members
@@ -59,12 +64,20 @@ public class FilteredList<T> implements ObservableList<T> {
         update();
     }
 
-    protected void addFilter(Predicate<T> filter) {
+    /**
+     * Adds filter to apply to source list
+     * @param filter {@link Predicate} to add as a filter
+     */
+    public void addFilter(Predicate<T> filter) {
         this.filters.addPredicate(true, filter);
         update();
     }
 
-    protected void removeFilter(Predicate<T> filter) {
+    /**
+     * Removes the given filter from the filter group
+     * @param filter {@link Predicate} to remove
+     */
+    public void removeFilter(Predicate<T> filter) {
         this.filters.removePredicate(filter);
         update();
     }
@@ -162,7 +175,13 @@ public class FilteredList<T> implements ObservableList<T> {
 
     @Override
     public T remove(int location) {
-        throw new UnsupportedOperationException(getClass().getSimpleName() + " does not support remove(int)");
+        T item = null;
+        if (location < filteredList.size()) {
+            item = filteredList.remove(location);
+            sourceList.remove(location);
+        }
+
+        return item;
     }
 
     @Override
@@ -178,7 +197,13 @@ public class FilteredList<T> implements ObservableList<T> {
 
     @Override
     public boolean removeAll(Collection<?> collection) {
-        throw new UnsupportedOperationException(getClass().getSimpleName() + " does not support removeAll(Collection)");
+        if (collection != null) {
+            for(Object item : collection) {
+                remove(item);
+            }
+        }
+
+        return true;
     }
 
     @Override
