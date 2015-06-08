@@ -1,8 +1,7 @@
 package com.raizlabs.android.coreutils.functions;
 
 /**
- * Interface for a predicate which evaluates a true or false value for a given
- * item.
+ * Interface for a predicate which evaluates a true or false value for a given item
  *
  * @param <T> The type of item to evaluate.
  */

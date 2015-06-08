@@ -1,4 +1,13 @@
 apply plugin: 'com.android.library'
+
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: "com.jfrog.bintray"
+
+def siteUrl ='https://github.com/Raizlabs/CoreUtils'
+def gitUrl = 'https://github.com/Raizlabs/CoreUtils.git'
+group = 'com.raizlabs'
+version = '1.0.1'
+
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
@@ -18,6 +27,82 @@ android {
 //apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/android_artifacts.gradle'
 //apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/maven_push.gradle'
 
+/**
+ * This task will generate the pom.xml file and install the AAR to the local M2 repo
+ */
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'CoreUtils'
+                url siteUrl
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
 dependencies {
     compile 'com.android.support:support-annotations:22.2.0'
 }
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = "sources"
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    options {
+        links("http://docs.oracle.com/javase/7/docs/api/");
+        linksOffline("http://d.android.com/reference", "${android.sdkDirectory}/docs/reference");
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+/**
+ * Uploads artifacts to Bintray
+ */
+bintray {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    user = 'lackofa7742' // properties.getProperty("bintray.user")
+    key = 'c9ad1a11f5a509188af4f2bb4f387c02174e2402' // properties.getProperty("bintray.apiKey")
+
+    configurations = ['archives']
+    pkg {
+        repo = 'Libraries'
+        name = "com.raizlabs.coreutils"
+        userOrg = 'raizlabs'
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+    }
+}
+
+//apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/android_artifacts.gradle'
+//apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/maven_push.gradle'
