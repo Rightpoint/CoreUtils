@@ -11,8 +11,8 @@ import java.util.List;
 
 
 /**
- * Class which takes a {@link CategorizedList} and "flattens" it into one llist of categories and
- * items such that it can be insterted into an adapter
+ * Class which takes a {@link CategorizedList} and "flattens" it into one list of categories and
+ * items such that it can be inserted into an adapter
  *
  * @param <Data> The type of data in the categorized list.
  */

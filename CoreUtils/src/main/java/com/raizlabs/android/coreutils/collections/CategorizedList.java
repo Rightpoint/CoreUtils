@@ -99,15 +99,15 @@ public class CategorizedList<Data> {
                         String[] categoriesArray = categorizer.getCategories(item);
 
                         if (categoriesArray == null) {
-                            return (categoriesArray == null || categoriesArray.length == 0);
+                            return true;
                         } else {
                             for (String categoryItem : categoriesArray) {
                                 if (category.equals(categoryItem)) {
                                     return true;
                                 }
                             }
+                            return false;
                         }
-                        return false;
                     }
                 });
 
@@ -119,19 +119,16 @@ public class CategorizedList<Data> {
 
     private void updateCategories() {
 
-        HashSet<String> addedTypes = new HashSet<>();
+        HashSet addedTypes = new HashSet<>();
         categories.beginTransaction();
         categories.clear();
-        for (Data data : proxyDataList) {
-            String[] categories = categorizer.getCategories(data);
-            for (String category : categories) {
-                if (!addedTypes.contains(category)) {
-                    addedTypes.add(category);
-                    this.categories.add(category);
-
-                }
+        for(Data data : proxyDataList) {
+            String[] categoriesArray = categorizer.getCategories(data);
+            for(String category : categoriesArray) {
+                addedTypes.add(category);
             }
         }
+        categories.addAll(addedTypes);
         categories.endTransaction();
     }
 }
