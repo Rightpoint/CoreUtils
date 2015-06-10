@@ -54,6 +54,6 @@ public class StringUtils {
                 return false;
             }
         }
-        return false;
+        return true;
     }
 }
