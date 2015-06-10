@@ -1,5 +1,13 @@
 apply plugin: 'com.android.library'
 
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: "com.jfrog.bintray"
+
+def siteUrl ='https://github.com/Raizlabs/CoreUtils'
+def gitUrl = 'https://github.com/Raizlabs/CoreUtils.git'
+group = 'com.raizlabs'
+version = '1.0.1'
+
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
@@ -17,5 +25,9 @@ android {
     }
 }
 
-apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/android_artifacts.gradle'
-apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/maven_push.gradle'
+dependencies {
+    compile 'com.android.support:support-annotations:22.2.0'
+}
+
+//apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/android_artifacts.gradle'
+//apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/maven_push.gradle'
