@@ -5,11 +5,12 @@ package com.raizlabs.android.coreutils.functions;
  *
  * @param <T> The type of object this interface provides.
  */
-public interface Provider<T>  {
+public interface Provider<T> {
 
-	/**
-	 * Obtains the provided object.
-	 * @return The provided object.
-	 */
-	public T obtainProvided();
+    /**
+     * Obtains the provided object.
+     *
+     * @return The provided object.
+     */
+    public T obtainProvided();
 }

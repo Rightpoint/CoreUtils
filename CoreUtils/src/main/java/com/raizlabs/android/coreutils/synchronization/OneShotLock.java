@@ -6,38 +6,42 @@ package com.raizlabs.android.coreutils.synchronization;
  * happened. You may synchronize on this object to lock its state.
  */
 public class OneShotLock {
-	private boolean unlocked;
-	/**
-	 * @return True if {@link #unlock()} has been called
-	 */
-	public boolean isUnlocked() { return unlocked; }
-	
-	public OneShotLock() {
-		unlocked = false;
-	}
-	
-	/**
-	 * Unlocks this lock
-	 */
-	public void unlock() {
-		synchronized (this) {
-			unlocked = true;
-			notifyAll();
-		}
-	}
-	
-	/**
-	 * Blocks until this {@link OneShotLock} is unlocked via a call
-	 * to {@link #unlock()}. If this has already been unlocked, it
-	 * will return immediately.
-	 */
-	public void waitUntilUnlocked() {
-		synchronized (this) {
-			while (!unlocked) {
-				try {
-					wait();
-				} catch (InterruptedException e) { }
-			}
-		}
-	}
+    private boolean unlocked;
+
+    /**
+     * @return True if {@link #unlock()} has been called
+     */
+    public boolean isUnlocked() {
+        return unlocked;
+    }
+
+    public OneShotLock() {
+        unlocked = false;
+    }
+
+    /**
+     * Unlocks this lock
+     */
+    public void unlock() {
+        synchronized (this) {
+            unlocked = true;
+            notifyAll();
+        }
+    }
+
+    /**
+     * Blocks until this {@link OneShotLock} is unlocked via a call
+     * to {@link #unlock()}. If this has already been unlocked, it
+     * will return immediately.
+     */
+    public void waitUntilUnlocked() {
+        synchronized (this) {
+            while (!unlocked) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+    }
 }

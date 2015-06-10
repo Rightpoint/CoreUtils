@@ -5,14 +5,14 @@ import com.raizlabs.android.coreutils.events.Event;
 /**
  * Interface which indicates that a class provides an {@link Event} which is
  * raised when its data changes.
- * 
+ *
  * @param <T> The type of data that will be sent as the arguments to the data
- * change event. In many cases, this may just be the class itself.
+ *            change event. In many cases, this may just be the class itself.
  */
 public interface ObservableData<T> {
-	/**
-	 * @return The {@link Event} which will be raised when the data in this
-	 * object changes.
-	 */
-	public Event<T> getDataChangedEvent();
+    /**
+     * @return The {@link Event} which will be raised when the data in this
+     * object changes.
+     */
+    public Event<T> getDataChangedEvent();
 }
