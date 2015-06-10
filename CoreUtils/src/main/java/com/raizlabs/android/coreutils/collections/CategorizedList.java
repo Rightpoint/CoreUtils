@@ -10,10 +10,14 @@ import com.raizlabs.android.coreutils.util.observable.lists.SimpleListObserverLi
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**
+ * Container that places a list of items into different categories
+ * @param <Data> The type of item contained in the list
+ */
 public class CategorizedList<Data> {
 
     /**
-     * Categorized data by having them specify what specific field or fields to use
+     * Categorize data by having the data item specify what specific field or fields to use
      *
      * @param <Data> type of data item from which to retrieve the categories
      */
@@ -41,6 +45,12 @@ public class CategorizedList<Data> {
         return proxyDataList;
     }
 
+    /**
+     * Populates this {@link CategorizedList} with the provided source list and a {@link Categorizer}
+     * that dictates how the items are to be categorized
+     * @param sourceList list containing the original data
+     * @param categorizer {@link Categorizer} that dicates how the items are to be categorized
+     */
     public CategorizedList(ObservableList<Data> sourceList, Categorizer<Data> categorizer) {
         this.proxyDataList = new ProxyObservableList<>(sourceList);
         this.categorizer = categorizer;
@@ -54,6 +64,10 @@ public class CategorizedList<Data> {
         updateCategories();
     }
 
+    /**
+     * Loads items from the provided {@link ObservableList} into this container
+     * @param sourceList list containing the data items to insert
+     */
     public void loadData(ObservableList<Data> sourceList) {
         if (sourceList == null) {
             sourceList = new ObservableListWrapper<>();
@@ -69,6 +83,11 @@ public class CategorizedList<Data> {
         });
     }
 
+    /**
+     * Gets a {@link ObservableList} that contains the data associated with the given category
+     * @param category Name of the category
+     * @return {@link ObservableList} of items that are associated with the given category
+     */
     public ObservableList<Data> getDataForCategory(final String category) {
         synchronized (filteredLists) {
             FilteredList<Data> categoryList = filteredLists.get(category);

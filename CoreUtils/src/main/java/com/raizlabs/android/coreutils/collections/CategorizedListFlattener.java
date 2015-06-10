@@ -9,6 +9,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+
+/**
+ * Class which takes a {@link CategorizedList} and "flattens" it into one llist of categories and
+ * items such that it can be insterted into an adapter
+ *
+ * @param <Data> The type of data in the categorized list.
+ */
 public class CategorizedListFlattener<Data> extends ObservableListWrapper<CategorizedListFlattener.FlattenedItem<Data>> {
 
     public interface FlattenedItem<Data> {
