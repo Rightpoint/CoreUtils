@@ -6,6 +6,7 @@ import com.raizlabs.android.coreutils.functions.Predicate;
 import com.raizlabs.android.coreutils.functions.PredicateGroup;
 import com.raizlabs.android.coreutils.util.observable.lists.ListObserver;
 import com.raizlabs.android.coreutils.util.observable.lists.ObservableList;
+import com.raizlabs.android.coreutils.util.observable.lists.ObservableListWrapper;
 import com.raizlabs.android.coreutils.util.observable.lists.SimpleListObserver;
 import com.raizlabs.android.coreutils.util.observable.lists.SimpleListObserverListener;
 
@@ -56,10 +57,12 @@ public class FilteredList<T> implements ObservableList<T> {
      *                   the item in this list if all filters are true.
      */
     public FilteredList(ObservableList<T> sourceList, PredicateGroup<T> filters) {
-        this.sourceList = sourceList;
+        this.sourceList = (sourceList == null) ? new ObservableListWrapper<T>() : sourceList;
         this.filters = new PredicateGroup<>(filters);
         this.filteredList = new LinkedList<>();
         this.listObserver = new SimpleListObserver<>();
+
+        // Binds a SourceListListener to this filtered list
         new SourceListListener<>(this);
         update();
     }
@@ -115,7 +118,9 @@ public class FilteredList<T> implements ObservableList<T> {
 
     @Override
     public boolean addAll(Collection<? extends T> collection) {
-        return sourceList.addAll(collection);
+        synchronized (filteredList) {
+            return sourceList.addAll(collection);
+        }
     }
 
     @Override
@@ -175,35 +180,41 @@ public class FilteredList<T> implements ObservableList<T> {
 
     @Override
     public T remove(int location) {
-        T item = null;
-        if (location < filteredList.size()) {
-            item = filteredList.remove(location);
-            sourceList.remove(location);
-        }
+        synchronized (filteredList) {
+            T item = null;
+            if (location < filteredList.size()) {
+                item = filteredList.remove(location);
+                sourceList.remove(location);
+            }
 
-        return item;
+            return item;
+        }
     }
 
     @Override
     public boolean remove(Object object) {
-        if (contains(object)) {
-            return sourceList.remove(object);
-        } else {
-            // Don't remove it if it doesn't exist in this list
-            // Even if it exists in the source list
-            return false;
+        synchronized (filteredList) {
+            if (contains(object)) {
+                return sourceList.remove(object);
+            } else {
+                // Don't remove it if it doesn't exist in this list
+                // Even if it exists in the source list
+                return false;
+            }
         }
     }
 
     @Override
     public boolean removeAll(Collection<?> collection) {
-        if (collection != null) {
-            for(Object item : collection) {
-                remove(item);
+        synchronized (filteredList) {
+            if (collection != null) {
+                for(Object item : collection) {
+                    remove(item);
+                }
             }
-        }
 
-        return true;
+            return true;
+        }
     }
 
     @Override
@@ -213,30 +224,40 @@ public class FilteredList<T> implements ObservableList<T> {
 
     @Override
     public T set(int location, T object) {
-        throw new UnsupportedOperationException(getClass().getSimpleName() + " does not support set(int, T)");
+        synchronized (filteredList) {
+            return sourceList.set(sourceList.indexOf(filteredList.get(location)), object);
+        }
     }
 
     @Override
     public int size() {
-        return filteredList.size();
+        synchronized (filteredList) {
+            return filteredList.size();
+        }
     }
 
     @NonNull
     @Override
     public List<T> subList(int start, int end) {
-        return filteredList.subList(start, end);
+        synchronized (filteredList) {
+            return filteredList.subList(start, end);
+        }
     }
 
     @NonNull
     @Override
     public Object[] toArray() {
-        return filteredList.toArray();
+        synchronized (filteredList) {
+            return filteredList.toArray();
+        }
     }
 
     @NonNull
     @Override
     public <T1> T1[] toArray(T1[] array) {
-        return filteredList.toArray(array);
+        synchronized (filteredList) {
+            return filteredList.toArray(array);
+        }
     }
     //endregion
 
