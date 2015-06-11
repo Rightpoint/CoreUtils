@@ -45,7 +45,7 @@ public class FilteredList<T> implements ObservableList<T> {
      *                   item in this list.
      */
     public FilteredList(ObservableList<T> sourceList, Predicate<T> filter) {
-        this(sourceList, new PredicateGroup<>(filter));
+        this(sourceList, new PredicateGroup<>(false, filter));
     }
 
     /**
@@ -58,7 +58,7 @@ public class FilteredList<T> implements ObservableList<T> {
      */
     public FilteredList(ObservableList<T> sourceList, PredicateGroup<T> filters) {
         this.sourceList = (sourceList == null) ? new ObservableListWrapper<T>() : sourceList;
-        this.filters = new PredicateGroup<>(filters);
+        this.filters = new PredicateGroup<>(true, filters);
         this.filteredList = new LinkedList<>();
         this.listObserver = new SimpleListObserver<>();
 
@@ -72,7 +72,7 @@ public class FilteredList<T> implements ObservableList<T> {
      * @param filter {@link Predicate} to add as a filter
      */
     public void addFilter(Predicate<T> filter) {
-        this.filters.addPredicate(true, filter);
+        this.filters.addPredicate(filter);
         update();
     }
 

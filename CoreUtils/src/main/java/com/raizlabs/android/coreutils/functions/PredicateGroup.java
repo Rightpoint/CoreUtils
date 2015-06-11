@@ -1,6 +1,7 @@
 package com.raizlabs.android.coreutils.functions;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -9,17 +10,21 @@ import java.util.Set;
  * Groups predicates together and enables them to act as one large {@link Predicate}
  * @param <Data> the type of item associated with this {@link PredicateGroup}
  */
-public class PredicateGroup<Data> implements Predicate<Data> {
+public class
+        PredicateGroup<Data> implements Predicate<Data> {
 
     private Map<Predicate<Data>, Boolean> predicateRequiredMap = new HashMap<>();
+    private HashSet<Predicate<Data>> predicateSet = new HashSet<>();
 
     private boolean allPredicatesRequired = false;
 
     @SafeVarargs
-    public PredicateGroup(Predicate<Data>... optionalPredicates) {
+    public PredicateGroup(boolean allPredicatesRequired, Predicate<Data>... optionalPredicates) {
         for (Predicate<Data> predicate : optionalPredicates) {
-            addPredicate(false, predicate);
+            addPredicate(predicate);
         }
+
+        setAllPredicatesRequired(allPredicatesRequired);
     }
 
     /**
@@ -32,11 +37,10 @@ public class PredicateGroup<Data> implements Predicate<Data> {
 
     /**
      * Adds {@link Predicate} to group and indicated whether {@link Predicate} is required or not
-     * @param isRequired whether the {@link Predicate} is required
      * @param predicate {@link Predicate} to add to group
      */
-    public void addPredicate(boolean isRequired, Predicate<Data> predicate) {
-        predicateRequiredMap.put(predicate, isRequired);
+    public void addPredicate(Predicate<Data> predicate) {
+        predicateSet.add(predicate);
     }
 
     /**
@@ -44,16 +48,16 @@ public class PredicateGroup<Data> implements Predicate<Data> {
      * @param predicate {@link Predicate} to remove from group
      */
     public void removePredicate(Predicate<Data> predicate) {
-        predicateRequiredMap.remove(predicate);
+        predicateSet.remove(predicate);
     }
 
     /**
      * Checks to see if group contains the indicated {@link Predicate}
-     * @param tag {@link Predicate} to check for
+     * @param predicate {@link Predicate} to check for
      * @return true if group contains the indicated {@link Predicate}, false otherwise
      */
-    public boolean contains(Predicate<Data> tag) {
-        return predicateRequiredMap.containsKey(tag);
+    public boolean contains(Predicate<Data> predicate) {
+        return predicateSet.contains(predicate);
     }
 
     /**
@@ -64,17 +68,30 @@ public class PredicateGroup<Data> implements Predicate<Data> {
      */
     @Override
     public boolean evaluate(Data item) {
-        boolean valid = false;
 
         if (item != null) {
-            for (Predicate<Data> predicate : predicateRequiredMap.keySet()) {
-                if (predicate != null) {
-                    if (predicate.evaluate(item) && (allPredicatesRequired || predicateRequiredMap.get(predicate))) {
-                        valid = true;
+            if (allPredicatesRequired) {
+                for (Predicate<Data> predicate : predicateRequiredMap.keySet()) {
+                    if (predicate != null) {
+                        if (!predicate.evaluate(item)) {
+                            return false;
+                        }
                     }
                 }
+                return true;
+
+            } else {
+                for (Predicate<Data> predicate : predicateRequiredMap.keySet()) {
+                    if (predicate != null) {
+                        if (predicate.evaluate(item)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
+        } else {
+            return false;
         }
-        return valid;
     }
 }
