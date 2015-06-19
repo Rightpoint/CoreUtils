@@ -24,10 +24,14 @@ public class FragmentStackManagerFragment extends Fragment {
 	 * the top fragment)
 	 */
 
-
+    //region Constants
 
     private static final String KEY_CONTAINER_ID = "containerID";
     private static final String KEY_STACK_TOP = "stackTop";
+
+    //endregion Constants
+
+    //region Statics
 
     /**
      * Creates a new {@link FragmentStackManagerFragment} which maintains a
@@ -42,18 +46,35 @@ public class FragmentStackManagerFragment extends Fragment {
         return manager;
     }
 
+    //endregion Statics
+
+    //region Members
+
     private int currentStackTop;
+
+    private int containerID;
+
+    //endregion Members
+
+    //region Constructors
 
     public FragmentStackManagerFragment() {
         super();
         currentStackTop = -1;
     }
 
-    private int containerID;
+    //endregion Constructors
+
+    //region Accessors
+
     protected void setContainerID(int id) {
         getArguments().putInt(KEY_CONTAINER_ID, id);
         this.containerID = id;
     }
+
+    //endregion Accessors
+
+    //region Lifecycle
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,6 +83,10 @@ public class FragmentStackManagerFragment extends Fragment {
         // Retain the instance across orientation changes
         setRetainInstance(true);
     }
+
+    //endregion Lifecycle
+
+    //region Instance Methods
 
     /**
      * Pops fragments until the stack is empty.
@@ -73,7 +98,6 @@ public class FragmentStackManagerFragment extends Fragment {
         }
         transaction.commit();
     }
-
 
     /**
      * Gets the fragment currently associated with the given tag.
@@ -101,30 +125,6 @@ public class FragmentStackManagerFragment extends Fragment {
     }
 
     /**
-     * Pushes the given fragment on top of the stack inside the given transaction
-     * such that multiple actions may be performed at once.
-     * @param fragment The {@link Fragment} to push on the top of the stack
-     * @param transaction The transaction to include the push in
-     * @return The identifying tag of the new fragment which can be used
-     * to pop back down to this fragment, assuming it hasn't been removed
-     * or replaced.
-     */
-    private String push(Fragment fragment, FragmentTransaction transaction) {
-        // Get the current top and detach it. We will likely pop back to it
-        // later so we don't want to do a full removal of the fragment
-        // This also means we can still obtain it by tag if need be
-        Fragment top = getTop();
-        if (top != null) {
-            transaction.detach(top);
-        }
-
-        // Add the given fragment to the next index
-        String newTag = getTagForIndex(++currentStackTop);
-        transaction.add(containerID, fragment, newTag);
-        return newTag;
-    }
-
-    /**
      * Pops the current fragment off the top of the stack, only if there are
      * fragments underneath it to be shown. The new fragment on the top of the
      * stack will be shown.
@@ -147,33 +147,6 @@ public class FragmentStackManagerFragment extends Fragment {
     }
 
     /**
-     * Pops the current fragment off the top of the stack inside the given
-     * transaction such that multiple actions may be performed at once.
-     * @param transaction The transaction to include the pop in
-     */
-    private void pop(FragmentTransaction transaction) {
-        popWithoutAttach(transaction);
-        Fragment newTop = getTop();
-        transaction.attach(newTop);
-    }
-
-    /**
-     * Pops the current fragment off the top of the stack inside the given
-     * transaction without performing the re-attach so views will not be
-     * recreated.
-     * @param transaction The transaction to include the pop in
-     */
-    private void popWithoutAttach(FragmentTransaction transaction) {
-        // Fully remove the top fragment. We're doing a pop so we can't
-        // ever return to it
-        transaction.remove(getTop());
-
-        // Decrement the top index and reattach the new top fragment
-        // It was detached before by push()
-        --currentStackTop;
-    }
-
-    /**
      * Continually pops until the given tag is reached or we end up at the root
      * fragment. Note that this WILL remove all fragments except the root if
      * the tag has already been removed and we never see it.
@@ -188,48 +161,6 @@ public class FragmentStackManagerFragment extends Fragment {
         transaction.commit();
 
         return success;
-    }
-
-    /**
-     * Continually pops until the given tag is reached or we end up at the root
-     * fragment inside the given transaction such that multiple operations may
-     * be performed at once.
-     * @param tag The tag to pop to.
-     * @param transaction The transaction to include the pops in.
-     * @return True if we are now sitting at a fragment with the given tag,
-     * false if we ended up at the root fragment or the stack was empty to
-     * begin with.
-     */
-    private boolean popToTag(String tag, FragmentTransaction transaction) {
-        boolean result = popToTagWithoutAttach(tag, transaction);
-        Fragment top = getTop();
-        if (top != null && top.isDetached()) {
-            transaction.attach(top);
-        }
-
-        return result;
-    }
-
-    /**
-     * Continually pops until the given tag is reached or we end up at the root
-     * fragment inside the given transaction without performing the re-attach
-     * so views will not be recreated.
-     * @param tag The tag to pop to.
-     * @param transaction The transaction to include the pops in.
-     * @return True if we are now sitting at a fragment with the given tag,
-     * false if we ended up at the root fragment or the stack was empty to
-     * begin with.
-     */
-    private boolean popToTagWithoutAttach(String tag, FragmentTransaction transaction) {
-        while (!isEmpty() && !isAtRootFragment()) {
-            if (!getTopTag().equals(tag)) {
-                popWithoutAttach(transaction);
-            } else {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -322,7 +253,6 @@ public class FragmentStackManagerFragment extends Fragment {
         bundle.putInt(KEY_STACK_TOP, currentStackTop);
     }
 
-
     /**
      * Returns the tag which identifies the current index in the stack. This
      * can be used to "remember" a position, push some fragments on top of it,
@@ -359,14 +289,62 @@ public class FragmentStackManagerFragment extends Fragment {
         return currentStackTop < 0;
     }
 
-    /**
-     * Returns the tag we use for the given index
-     * @param index The index to get the tag for
-     * @return The tag we use
-     */
     protected String getTagForIndex(int index) {
         return String.format("FragmentStack%d", index);
     }
 
+    private String push(Fragment fragment, FragmentTransaction transaction) {
+        // Get the current top and detach it. We will likely pop back to it
+        // later so we don't want to do a full removal of the fragment
+        // This also means we can still obtain it by tag if need be
+        Fragment top = getTop();
+        if (top != null) {
+            transaction.detach(top);
+        }
 
+        // Add the given fragment to the next index
+        String newTag = getTagForIndex(++currentStackTop);
+        transaction.add(containerID, fragment, newTag);
+        return newTag;
+    }
+
+    private void pop(FragmentTransaction transaction) {
+        popWithoutAttach(transaction);
+        Fragment newTop = getTop();
+        transaction.attach(newTop);
+    }
+
+    private void popWithoutAttach(FragmentTransaction transaction) {
+        // Fully remove the top fragment. We're doing a pop so we can't
+        // ever return to it
+        transaction.remove(getTop());
+
+        // Decrement the top index and reattach the new top fragment
+        // It was detached before by push()
+        --currentStackTop;
+    }
+
+    private boolean popToTag(String tag, FragmentTransaction transaction) {
+        boolean result = popToTagWithoutAttach(tag, transaction);
+        Fragment top = getTop();
+        if (top != null && top.isDetached()) {
+            transaction.attach(top);
+        }
+
+        return result;
+    }
+
+    private boolean popToTagWithoutAttach(String tag, FragmentTransaction transaction) {
+        while (!isEmpty() && !isAtRootFragment()) {
+            if (!getTopTag().equals(tag)) {
+                popWithoutAttach(transaction);
+            } else {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    //endregion Instance Methods
 }
