@@ -5,12 +5,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+/**
+ * Class for a {@link Fragment} that is retained and manages a stack of {@link Fragment}s
+ */
 public class FragmentStackManagerFragment extends Fragment {
 
     /*
-	 * ***********
-	 * ** NOTES **
-	 * ***********
 	 * This implementation works by tagging each fragment with a string that
 	 * matches its index in the stack. This way, we can keep adding, removing,
 	 * replacing, etc. without keeping pointers to each fragment. Since the
