@@ -1,6 +1,5 @@
-<manifest package="com.raizlabs.baseutils"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="com.raizlabs.coreutils">
 
-    <application />
+    <application/>
 
 </manifest>
