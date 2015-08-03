@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.bintray'
 
 android {
     compileSdkVersion 21
@@ -9,7 +8,7 @@ android {
         minSdkVersion 4
         targetSdkVersion 21
         versionCode 1
-        versionName "1.0"
+        versionName VERSION_NAME
     }
 
     compileOptions {
@@ -23,25 +22,4 @@ dependencies {
     compile 'com.android.support:support-v4:22.2.0'
 }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
-bintray {
-    user = properties.getProperty("bt_user")
-    key = properties.getProperty("bt_key")
-
-    configurations = ['archives']
-    pkg {
-        repo = 'Libraries'
-        name = 'coreutils'
-        userOrg = 'raizlabs'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/Raizlabs/CoreUtils.git'
-        version {
-            name = VERSION_NAME
-            vcsTag = VERSION_NAME
-            released  = new Date()
-            publish = true //If version should be auto published after an upload
-        }
-    }
-}
+apply from: 'https://raw.githubusercontent.com/Raizlabs/maven-releases/master/raizlabs_bintray_upload.gradle'
