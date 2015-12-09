@@ -156,7 +156,7 @@ public class ObservableListWrapper<T> implements ObservableList<T> {
     @Override
     public boolean addAll(Collection<? extends T> collection) {
         boolean result = false;
-        int position = underlyingList.size();
+        int position = underlyingList.size() - 1;
         if (collection != null) {
             result = underlyingList.addAll(collection);
         }
