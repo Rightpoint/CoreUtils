@@ -84,6 +84,14 @@ public class FilteredList<T> implements ObservableList<T> {
         update();
     }
 
+    /**
+     * Forces this {@link FilteredList} to re-evaluate the current filters against the source list and update
+     * accordingly.
+     */
+    public void reevaluate() {
+        update();
+    }
+
     //region Inherited Methods
     @Override
     public ListObserver<T> getListObserver() {
