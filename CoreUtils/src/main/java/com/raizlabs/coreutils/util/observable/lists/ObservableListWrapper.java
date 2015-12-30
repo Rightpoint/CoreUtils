@@ -142,7 +142,7 @@ public class ObservableListWrapper<T> implements ObservableList<T> {
         int position = underlyingList.size();
         boolean result = underlyingList.add(object);
         if (result) {
-            onItemRangeChanged(position, 1);
+            onItemRangeInserted(position, 1);
         }
         return result;
     }
@@ -156,7 +156,7 @@ public class ObservableListWrapper<T> implements ObservableList<T> {
     @Override
     public boolean addAll(Collection<? extends T> collection) {
         boolean result = false;
-        int position = underlyingList.size() - 1;
+        int position = underlyingList.size();
         if (collection != null) {
             result = underlyingList.addAll(collection);
         }
