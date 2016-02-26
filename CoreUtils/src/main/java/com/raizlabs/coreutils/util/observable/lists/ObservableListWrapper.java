@@ -92,7 +92,7 @@ public class ObservableListWrapper<T> implements ObservableList<T> {
     }
 
     /**
-     * Replaces any existing instances of the given item (as defined by {@link Object#equals()})
+     * Replaces any existing instances of the given item (as defined by {@link Object#equals(Object)})
      * or appends the item to the end of the list if not found.
      *
      * @param item       The item to add
@@ -222,12 +222,12 @@ public class ObservableListWrapper<T> implements ObservableList<T> {
 
     @Override
     public ListIterator<T> listIterator() {
-        return underlyingList.listIterator();
+        return listIterator(0);
     }
 
     @Override
     public ListIterator<T> listIterator(int location) {
-        return underlyingList.listIterator(location);
+        return new ObservableListWrapperIterator(location);
     }
 
     @Override
@@ -355,6 +355,86 @@ public class ObservableListWrapper<T> implements ObservableList<T> {
             }
         } else {
             throw new IllegalStateException("Tried to end a transaction when no transaction was running!");
+        }
+    }
+
+    /**
+     * Mostly copied from {@link java.util.AbstractList}.FullListIterator.
+     * Ignoring concurrent modifications since we are not currently tracking modifications.
+     */
+    private class ObservableListWrapperIterator implements java.util.ListIterator<T> {
+
+        private int position;
+        private int lastPosition = -1;
+
+        public ObservableListWrapperIterator(int start) {
+            if (start >= 0 && start <= size()) {
+                position = start - 1;
+            } else {
+                throw new IndexOutOfBoundsException();
+            }
+        }
+
+        @Override
+        public void add(T object) {
+            ObservableListWrapper.this.add(position + 1, object);
+            position++;
+            lastPosition = -1;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return position + 1 < size();
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return position >= 0;
+        }
+
+        @Override
+        public T next() {
+            T result = get(position + 1);
+            lastPosition = ++position;
+            return result;
+        }
+
+        @Override
+        public int nextIndex() {
+            return position + 1;
+        }
+
+        @Override
+        public T previous() {
+            T result = get(position);
+            lastPosition = position;
+            position--;
+            return result;
+        }
+
+        @Override
+        public int previousIndex() {
+            return position;
+        }
+
+        @Override
+        public void remove() {
+            if (this.lastPosition == -1) {
+                throw new IllegalStateException();
+            }
+
+            ObservableListWrapper.this.remove(lastPosition);
+
+            if (position == lastPosition) {
+                position--;
+            }
+
+            lastPosition = -1;
+        }
+
+        @Override
+        public void set(T object) {
+            ObservableListWrapper.this.set(lastPosition, object);
         }
     }
 }
