@@ -28,3 +28,4 @@ proguard/
 *.iws
 .idea/
 crashlytics-build.properties
+.DS_Store

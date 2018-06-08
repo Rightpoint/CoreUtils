@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import java.util.Locale;
+
 /**
  * Class for a {@link Fragment} that is retained and manages a stack of {@link Fragment}s
  */
@@ -290,7 +292,7 @@ public class FragmentStackManagerFragment extends Fragment {
     }
 
     protected String getTagForIndex(int index) {
-        return String.format("FragmentStack%d", index);
+        return String.format(Locale.getDefault(),"FragmentStack%d", index);
     }
 
     private String push(Fragment fragment, FragmentTransaction transaction) {
