@@ -3,6 +3,8 @@ package com.raizlabs.coreutils.app;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
+import java.util.Locale;
+
 public class FragmentStackManagerUtils {
 
     /**
@@ -40,6 +42,6 @@ public class FragmentStackManagerUtils {
     }
 
     private static String getFragmentStackManagerTag(int containerID) {
-        return String.format("StackManager%d", containerID);
+        return String.format(Locale.getDefault(),"StackManager%d", containerID);
     }
 }
